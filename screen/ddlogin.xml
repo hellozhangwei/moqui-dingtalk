@@ -1,0 +1,43 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!--
+This software is in the public domain under CC0 1.0 Universal plus a 
+Grant of Patent License.
+
+To the extent possible under law, the author(s) have dedicated all
+copyright and related and neighboring rights to this software to the
+public domain worldwide. This software is distributed without any
+warranty.
+
+You should have received a copy of the CC0 Public Domain Dedication
+along with this software (see the LICENSE.md file). If not, see
+<http://creativecommons.org/publicdomain/zero/1.0/>.
+-->
+<screen xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+        xsi:noNamespaceSchemaLocation="http://moqui.org/xsd/xml-screen-3.xsd"
+        include-child-content="true" require-authentication="false" standalone="true" screen-theme-type-enum-id="STT_POP_COMMERCE">
+
+    <transition name="auth" read-only="true">
+        <actions>
+            <log message="=========context.authCode============${context.authCode}"/>
+            <script>
+                org.moqui.dingtalk.DingTalk.getAccessToken(context.authCode)
+                ec.user.internalLoginUser('john.doe') //todo create a new user account and login
+            </script>
+        </actions>
+        <default-response url="/"/>
+    </transition>
+
+    <actions>
+        <script>
+            import org.moqui.util.SystemBinding
+            context.redirect_uri = SystemBinding.getPropOrEnv("dingtalk_redirect_uri")
+            context.client_id = SystemBinding.getPropOrEnv("dingtalk_client_id")
+        </script>
+    </actions>
+
+    <widgets>
+<!--        <render-mode><text type="html" location="component://moqui-dingtalk/screen/ddlogin.html.ftl"/></render-mode>-->
+<!--        <link url="https://login.dingtalk.com/oauth2/auth?redirect_uri=http://ae94-101-30-126-62.ngrok-free.app/ddlogin/auth&amp;response_type=code&amp;client_id=dingzcsmodzfv5ec3vng&amp;scope=openid&amp;prompt=consent" text="钉钉扫码登录"/>-->
+        <link url="https://login.dingtalk.com/oauth2/auth?redirect_uri=${redirect_uri}&amp;response_type=code&amp;client_id=${client_id}&amp;scope=openid&amp;prompt=consent" text="钉钉扫码登录"/>
+    </widgets>
+</screen>
